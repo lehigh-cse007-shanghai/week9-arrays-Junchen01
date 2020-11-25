@@ -1,93 +1,86 @@
 package lehigh;
 
 import processing.core.PApplet;
+import processing.core.PFont;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 
 public class MovingBalls extends PApplet{
 
-    int number = 8;
-    int x [] = new int[number];
-    int y [] = new int[number];
-    int speedX [] = new int[number];
-    int speedY [] = new int[number];
-    int color [] []= new int[number] [3];
+    int number = 4;
+    int score = 0;
+    PFont f;
+    ArrayList<Ball> balls;
 
+    class Ball{
+        int x, y, speedX,speedY,radius;
+        int [] color;
+        Random random = new Random();
+        Ball(){
+            radius = (int)random(50,70);
+            x = (int)random(radius,width-radius);
+            y = (int)random(radius,height-radius);
+            speedX = random.nextInt(3) + 1;
+            speedY = random.nextInt(3) + 1;
+            color =  new int[]{random.nextInt(255),random.nextInt(255),random.nextInt(255)};
+        }
+
+        public void move(){
+            ellipse(x, y, radius, radius);
+            fill(color[0],color[1],color[2]);
+
+            if(x >= width-radius || x <= radius){
+                speedX = -speedX;
+            }
+            if(y >= height-radius || y <= radius){
+                speedY = -speedY;
+            }
+            x += speedX;
+            y += speedY;
+        }
+
+    }
 
 
     public void settings(){
         size(500, 500);
-
-        Random random = new Random();
-        for(int i = 0; i < number; i++){
-            x[i] = random.nextInt(500);
-            y[i] = random.nextInt(500);
-            speedX[i] = random.nextInt(3) + 1;
-            speedY[i] = random.nextInt(3) + 1;
-            color[i] = new int[] {random.nextInt(255),random.nextInt(255),random.nextInt(255)};
+        balls = new ArrayList<>();
+        balls.add(new Ball());
+        for(int i = 0; i < number; i++) {
+            balls.add(new Ball());
         }
     }
+    public void setup() {
+        f = createFont("Arial",16,true);
+    }
+
 
     public void draw(){
-        background(255,255,255);
+        background(255);
 
-        int xDifference, yDifference;
 
-        for (int i = 0; i < x.length; i++){
-            fill(color[i][0],color[i][1],color[i][2]);
-            ellipse(x[i], y[i], 50, 50);
-            x[i] = positionX(i);
-            y[i] = positionY(i);
-            speedX[i] = changeSpeedX(i);
-            speedY[i] = changeSpeedY(i);
+        for (Ball b: balls){
+            b.move();
+            //b.mouseClicked();
+        }
 
-            if (i != x.length - 1) {
-                for(int lineTest = i; lineTest < x.length; lineTest++){
-                    xDifference = x[lineTest] - x[i];
-                    yDifference = y[lineTest] - y[i];
-                    if(Math.abs(xDifference) <= 100 && Math.abs(yDifference) <= 100){
-                        line(x[lineTest], y[lineTest], x[i], y[i]);
-                    }
-                }
+        textFont(f);
+        textAlign(CENTER);
+        text("Score : " + score,100,60);
+    }
 
+    public void mousePressed() {
+        for(int i =0;i <= number;i++){
+             if (mouseX <= balls.get(i).x + balls.get(i).radius && mouseX >= balls.get(i).x - balls.get(i).radius &&
+                     mouseY <= balls.get(i).y + balls.get(i).radius && mouseY >= balls.get(i).y - balls.get(i).radius) {
+                balls.get(i).speedX += balls.get(i).speedX + 1;
+                balls.get(i).speedY += balls.get(i).speedY + 1;
+                score++;
             }
-
         }
-
     }
-
-    public int positionX (int n){
-        x[n] += speedX[n];
-        return x[n];
-    }
-
-    public int positionY (int n){
-        y[n] += speedY[n];
-        return y[n];
-    }
-
-    public int changeSpeedX (int n){
-        if(x[n] >= 500){
-            speedX[n] = -speedX[n];
-        }
-        if(x[n] <= 0){
-            speedX[n] = -speedX[n];
-        }
-        return speedX[n];
-    }
-
-    public int changeSpeedY (int n){
-        if(y[n] >= 500){
-            speedY[n] = -speedY[n];
-        }
-        if(y[n] <= 0) {
-            speedY[n] = -speedY[n];
-        }
-        return speedY[n];
-    }
-
-
 
     public static void main(String[] args) {
         String[] processingArgs = {"MovingBalls"};
