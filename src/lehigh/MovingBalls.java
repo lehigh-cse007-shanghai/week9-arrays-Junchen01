@@ -31,10 +31,10 @@ public class MovingBalls extends PApplet{
             ellipse(x, y, radius, radius);
             fill(color[0],color[1],color[2]);
 
-            if(x >= width-radius || x <= radius){
+            if(x >= width - radius/2 || x <= radius/2){
                 speedX = -speedX;
             }
-            if(y >= height-radius || y <= radius){
+            if(y >= height - radius/2 || y <= radius/2){
                 speedY = -speedY;
             }
             x += speedX;
@@ -47,7 +47,6 @@ public class MovingBalls extends PApplet{
     public void settings(){
         size(500, 500);
         balls = new ArrayList<>();
-        balls.add(new Ball());
         for(int i = 0; i < number; i++) {
             balls.add(new Ball());
         }
@@ -60,11 +59,13 @@ public class MovingBalls extends PApplet{
     public void draw(){
         background(255);
 
-
-        for (Ball b: balls){
-            b.move();
-            //b.mouseClicked();
+        for (int i = 0; i < balls.size();i++){
+            balls.get(i).move();
         }
+
+//        for (Ball b: balls){
+//            b.move();
+//        }
 
         textFont(f);
         textAlign(CENTER);
